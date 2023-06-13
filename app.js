@@ -34,7 +34,11 @@ app.get("/players/", async (request, response) => {
     ORDER BY player_id;
    `;
   const finalOutputArray = await db.all(getPlayersSqlcode);
-  response.send(finalOutputArray);
+  let arr = [];
+  for (let i of finalOutputArray) {
+    arr.push(convertDbObjectToResponseObject(i));
+  }
+  response.send(arr);
 });
 
 // ADD POST
@@ -64,7 +68,7 @@ app.get("/players/:playerId/", async (request, response) => {
   const { playerId } = request.params;
   const fetchQuery = ` SELECT * FROM cricket_team WHERE player_id = ${playerId} ;`;
   const finalOutputArray = await db.get(fetchQuery);
-  response.send(finalOutputArray);
+  response.send(convertDbObjectToResponseObject(finalOutputArray));
 });
 
 // PUT new data
@@ -106,5 +110,14 @@ app.delete("/players/:playerId/", async (request, response) => {
   const responseDb = await db.run(deletePlayer);
   response.send("Player Removed");
 });
+
+const convertDbObjectToResponseObject = (dbObject) => {
+  return {
+    playerId: dbObject.player_id,
+    playerName: dbObject.player_name,
+    jerseyNumber: dbObject.jersey_number,
+    role: dbObject.role,
+  };
+};
 
 module.exports = listenAndinitializeDb;
