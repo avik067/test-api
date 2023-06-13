@@ -121,3 +121,4 @@ const convertDbObjectToResponseObject = (dbObject) => {
 };
 
 module.exports = listenAndinitializeDb;
+module.exports = app;
